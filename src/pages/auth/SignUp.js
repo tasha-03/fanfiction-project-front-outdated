@@ -2,7 +2,7 @@ import { useState } from "react";
 import useLoginGuard from "../../hooks/useLoginGuard";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { postRequest } from "../../utilities/requests";
+import { getRequest, postRequest } from "../../utilities/requests";
 
 const SignUp = () => {
   useLoginGuard({ loggedIn: true, path: "/" });
@@ -36,7 +36,7 @@ const SignUp = () => {
         "You must provide login, so we can be able to recognize you later."
       );
       loginValid = false;
-    } else{
+    } else {
       setLoginHelpShow(false);
       loginValid = true;
     }
@@ -48,7 +48,7 @@ const SignUp = () => {
       setEmailHelpShow(true);
       setEmailHelpText("Please provide proper email address.");
       emailValid = false;
-    }else{
+    } else {
       setEmailHelpShow(false);
       emailValid = true;
     }
@@ -82,6 +82,10 @@ const SignUp = () => {
       return;
     } else {
       localStorage.setItem("token", response.token);
+      const codeResponse = getRequest("users/email/confirm/request");
+      if (!codeResponse.success) {
+        alert(codeResponse.message);
+      }
       navigate("/confirm-email");
     }
   };

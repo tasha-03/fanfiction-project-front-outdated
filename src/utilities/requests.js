@@ -25,7 +25,6 @@ exports.postRequest = async (path, body) => {
       response.message = response.code;
     }
   }
-  console.log(response)
   return response;
 };
 
@@ -55,6 +54,5 @@ exports.getRequest = async (path) => {
       response.message = response.code;
     }
   }
-  console.log(response)
   return response;
 };

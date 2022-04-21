@@ -17,8 +17,6 @@ const NavBar = () => {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
   const { isLoggedIn } = useToken();
-  console.log(isLoggedIn);
-  console.log(currentUser);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -27,7 +25,6 @@ const NavBar = () => {
         setCurrentUser(res.user);
       };
       getCurrentUser();
-      console.log("got user", currentUser);
     } else {
       setCurrentUser(null)
     }
@@ -49,7 +46,7 @@ const NavBar = () => {
       <Dropdown>
         <Dropdown.Toggle />
         <Dropdown.Menu align="end">
-          <Dropdown.Item as={Link} to={"/users/"}>
+          <Dropdown.Item as={Link} to={"/users/" + (currentUser ? currentUser.login : null)}>
             My profile
           </Dropdown.Item>
           <Dropdown.Item onClick={logout}>Log out</Dropdown.Item>

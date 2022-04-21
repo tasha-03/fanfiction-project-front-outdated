@@ -7,12 +7,10 @@ const useLoginGuard = ({ loggedIn, path }) => {
   const { isLoggedIn: currentLoggedIn } = useToken();
 
   useEffect(() => {
-    console.log({ loggedIn, path, currentLoggedIn })
-
     if (loggedIn === currentLoggedIn) {
       navigate(path);
     }
-  }, []);
+  });
 };
 
 export default useLoginGuard;

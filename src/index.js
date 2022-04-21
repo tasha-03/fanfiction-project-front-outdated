@@ -13,6 +13,7 @@ import LogIn from "./pages/auth/Login";
 import { Container } from "react-bootstrap";
 import useToken from "./hooks/useToken";
 import EmailConfirmation from "./pages/auth/EmailConfirmation";
+import Dashboard from "./pages/users/Profile";
 
 const App = () => {
 
@@ -34,7 +35,7 @@ const App = () => {
                 <Route path="search" element={<Users />} />
                 <Route path=":userLogin">
                   <Route index element={<Navigate to="dashboard" />} />
-                  <Route path="dashboard" />
+                  <Route path="dashboard" element={<Dashboard />} />
                   <Route path="works">
                     <Route index />
                     <Route path="drafts" />
