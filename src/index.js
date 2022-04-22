@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Footer from "./components/Footer";
@@ -11,11 +11,32 @@ import Users from "./pages/users/Users";
 import SignUp from "./pages/auth/SignUp";
 import LogIn from "./pages/auth/Login";
 import { Container } from "react-bootstrap";
-import useToken from "./hooks/useToken";
 import EmailConfirmation from "./pages/auth/EmailConfirmation";
-import Dashboard from "./pages/users/Profile";
+import Dashboard from "./pages/users/Dashboard";
+import { Provider, useDispatch } from "react-redux";
+import store from "./store";
+import { getRequest } from "./utilities/requests";
+import { login } from "./features/authSlice";
+
+import "./index.css";
 
 const App = () => {
+  const dispatch = useDispatch();
+  const autoLogin = async () => {
+    const response = await getRequest("users/myself");
+    if (response.success) {
+      dispatch(
+        login({
+          user: response.user,
+          token: localStorage.getItem("token"),
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    autoLogin();
+  }, []);
 
   return (
     <React.StrictMode>
@@ -77,4 +98,9 @@ const App = () => {
   );
 };
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById("root")
+);
