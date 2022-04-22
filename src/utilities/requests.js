@@ -5,7 +5,7 @@ exports.postRequest = async (path, body) => {
   const isLoggedIn = Boolean(token);
   if (isLoggedIn) headers["Authorization"] = `Bearer ${token}`;
 
-  const response = await fetch(`api/v1/${path}`, {
+  const response = await fetch(`/api/v1/${path}`, {
     method: "POST",
     headers,
     body: JSON.stringify(body),
@@ -35,7 +35,7 @@ exports.getRequest = async (path) => {
   const isLoggedIn = Boolean(token);
   if (isLoggedIn) headers["Authorization"] = `Bearer ${token}`;
 
-  const response = await fetch(`api/v1/${path}`, {
+  const response = await fetch(`/api/v1/${path}`, {
     method: "GET",
     headers,
   })
