@@ -1,42 +1,84 @@
-import { Container, Col, Row } from "react-bootstrap";
-import { useState, useEffect } from "react";
-import { getRequest } from "../utilities/requests";
-import useToken from "../hooks/useToken";
+import {
+  Container,
+  Col,
+  Row,
+  Carousel,
+  CarouselItem,
+  Card,
+  Button,
+} from "react-bootstrap";
+import { useSelector } from "react-redux";
+import WorkCard from "../components/WorkCard";
 
 const Home = () => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const { isLoggedIn } = useToken();
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      const getCurrentUser = async () => {
-        const res = await getRequest("users/myself");
-        setCurrentUser(res.user);
-      };
-      getCurrentUser();
-    } else {
-      setCurrentUser(null);
-    }
-  }, [isLoggedIn]);
+  const currentUser = useSelector((state) => state.auth.user);
+  const isLoggedIn = Boolean(useSelector((state) => state.auth.token));
 
   const home = !isLoggedIn ? (
-    <Container fluid>
+    <Container fluid className="py-3">
       <Row>
         <Col sm={12} md={12}>
-          Slider
+          <Carousel variant="dark" interval={null}>
+            <CarouselItem>
+              <Container>
+                <Row className="justify-content-center my-3">
+                  <Col xs={11}>
+                    <WorkCard workId={1} />
+                  </Col>
+                </Row>
+              </Container>
+            </CarouselItem>
+            <CarouselItem>
+              <Container>
+                <Row className="justify-content-center my-3">
+                  <Col xs={11}>
+                    <WorkCard workId={2} />
+                  </Col>
+                </Row>
+              </Container>
+            </CarouselItem>
+          </Carousel>
         </Col>
         <Col sm={12} md={6}>
-          What is Fanfiction-Project
+          <Card>
+            <Card.Header className="text-center">
+              What is Fanfiction-Project
+            </Card.Header>
+            <Card.Body>Random text</Card.Body>
+          </Card>
         </Col>
         <Col sm={12} md={6}>
-          More than 100,000 users and 75,000 works!
+          <Card>
+            <Card.Header className="text-center">
+              More than 100,000 users and 75,000 works!
+            </Card.Header>
+            <Card.Body>
+              <Container>
+                <Row>
+                  <Col xs={8}>
+                    <p>You can join us and:</p>
+                    <ul>
+                      <li>Post your own works;</li>
+                      <li>Save your history;</li>
+                      <li>Keep track of your favourite works</li>
+                    </ul>
+                  </Col>
+                  <Col className="d-flex flex-column justify-content-center">
+                    <Button variant="primary">Create account</Button>
+                  </Col>
+                </Row>
+              </Container>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
     </Container>
   ) : (
     <Container fluid>
       <Row>
-        <Col sm={12} md={6}>Browse your favourites:</Col>
+        <Col sm={12} md={6}>
+          Browse your favourites:
+        </Col>
         <Col sm={12} md={6}>
           <div>Post New Work</div>
           <div>News</div>

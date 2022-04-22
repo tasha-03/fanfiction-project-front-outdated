@@ -9,29 +9,20 @@ import {
   FormControl,
   Dropdown,
 } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import useToken from "../hooks/useToken";
-import { getRequest } from "../utilities/requests";
+import { logout } from "../features/authSlice";
 
 const NavBar = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState(null);
-  const { isLoggedIn } = useToken();
+  const currentUser = useSelector((state) => state.auth.user);
+  const isLoggedIn = Boolean(useSelector((state) => state.auth.token));
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      const getCurrentUser = async () => {
-        const res = await getRequest("users/myself");
-        setCurrentUser(res.user);
-      };
-      getCurrentUser();
-    } else {
-      setCurrentUser(null)
-    }
-  }, [isLoggedIn]);
-
-  const logout = () => {
-    localStorage.removeItem("token");
+  const handleLogout = (e) => {
+    e.preventDefault();
+    dispatch(logout());
     navigate("/");
   };
 
@@ -46,19 +37,30 @@ const NavBar = () => {
       <Dropdown>
         <Dropdown.Toggle />
         <Dropdown.Menu align="end">
-          <Dropdown.Item as={Link} to={"/users/" + (currentUser ? currentUser.login : null)}>
+          <Dropdown.Item
+            as={Link}
+            to={"/users/" + (currentUser ? currentUser.login : null)}
+          >
             My profile
           </Dropdown.Item>
-          <Dropdown.Item onClick={logout}>Log out</Dropdown.Item>
+          <Dropdown.Item onClick={handleLogout}>Log out</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     </Nav>
   ) : (
-    <Nav>
-      <Nav.Link as={Link} to="/login">
+    <Nav className="flex-row">
+      <Nav.Link
+        style={{ paddingRight: "0.5rem", paddingLeft: "0.5rem" }}
+        as={Link}
+        to="/login"
+      >
         Log In
       </Nav.Link>
-      <Nav.Link as={Link} to="/signup">
+      <Nav.Link
+        style={{ paddingRight: "0.5rem", paddingLeft: "0.5rem" }}
+        as={Link}
+        to="/signup"
+      >
         Sign Up
       </Nav.Link>
     </Nav>

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <div
-      className="bg-light fixed-bottom w-100"
+      className="bg-light w-100 mt-auto"
       style={{
         paddingTop: "25px",
         paddingBottom: "35px",
@@ -17,14 +17,14 @@ const Footer = () => {
           <Col xs={12} md={6} className="d-flex flex-column">
             <p>Main pages:</p>
             <Link
-              className="text-secondary"
+              className="nav-link"
               style={{ textDecoration: "none" }}
               to="/"
             >
               Home
             </Link>
             <Link
-              className="text-secondary"
+              className="nav-link"
               style={{ textDecoration: "none" }}
               to="/works"
             >
@@ -34,14 +34,14 @@ const Footer = () => {
           <Col xs={12} md={6} className="d-flex flex-column">
             <p>About our website:</p>
             <Link
-              className="text-secondary"
+              className="nav-link"
               style={{ textDecoration: "none" }}
               to="/about/FAQ"
             >
               FAQ
             </Link>
             <Link
-              className="text-secondary"
+              className="nav-link"
               style={{ textDecoration: "none" }}
               to="/about/privacy"
             >

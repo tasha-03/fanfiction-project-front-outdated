@@ -1,9 +1,10 @@
-import { Container } from "react-bootstrap"
+import { Container } from "react-bootstrap";
+import { useSelector } from "react-redux";
 
-const Works = ({ isLoggedIn }) => {
-    return <Container>
-        Works
-    </Container>
-}
+const Works = () => {
+  const isLoggedIn = Boolean(useSelector((state) => state.auth.token));
 
-export default Works
+  return <Container className="py-3">Works</Container>;
+};
+
+export default Works;
