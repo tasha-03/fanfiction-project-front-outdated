@@ -13,7 +13,7 @@ const Footer = () => {
       }}
     >
       <Container>
-        <Row>
+        <Row className="gap-3 gap-md-0">
           <Col xs={12} md={6} className="d-flex flex-column">
             <p>Main pages:</p>
             <Link

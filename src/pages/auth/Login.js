@@ -7,24 +7,31 @@ import { getRequest, postRequest } from "../../utilities/requests";
 import { login as authLogin } from "../../features/authSlice";
 
 const LogIn = () => {
+  document.title = "Log In — Fanfiction-Project";
   const dispatch = useDispatch();
   useLoginGuard({ loggedIn: true, path: "/" });
   const navigate = useNavigate();
 
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
+  const [mainHelpShow, setMainHelpShow] = useState(false);
+  const [mainHelpText, setMainHelpText] = useState("");
+  
 
   const handleLogin = async (e) => {
     e.preventDefault();
     const response = await postRequest("users/login", { login, password });
 
     if (!response.success) {
-      alert(response.message);
+      setMainHelpShow(true);
+      setMainHelpText(response.message + ".");
       setPassword("");
       return;
     }
     localStorage.setItem("token", response.token);
-    const res = await getRequest("users/myself");
+    const res = await getRequest(
+      `users/myself?tz=${Intl.DateTimeFormat().resolvedOptions().timeZone}`
+    );
     dispatch(
       authLogin({
         user: res.user,
@@ -39,10 +46,20 @@ const LogIn = () => {
       <Row className="justify-content-center">
         <Col sm={12} md={6}>
           <Form>
+            <Form.Text
+              id="mainHelpBlock"
+              muted
+              style={{ display: mainHelpShow ? "initial" : "none" }}
+            >
+              {mainHelpText}
+            </Form.Text>
             <Form.Group className="mb-4">
               <Form.Label>Login</Form.Label>
               <Form.Control
+                required
+				name="login"
                 placeholder="Login"
+                autoComplete="on"
                 value={login}
                 onChange={(e) => setLogin(e.target.value)}
               />
@@ -50,13 +67,15 @@ const LogIn = () => {
             <Form.Group className="mb-4">
               <Form.Label>Password</Form.Label>
               <Form.Control
+                required
                 type="password"
+				name="password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Group>
-            <Button type="submit" onClick={handleLogin}>
+            <Button name="loginSubmit" type="submit" onClick={handleLogin}>
               Log In
             </Button>
           </Form>

@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { login as authLogin } from "../../features/authSlice";
 
 const SignUp = () => {
+  document.title = "Sign Up — Fanfiction-Project";
   useLoginGuard({ loggedIn: true, path: "/" });
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -15,6 +16,8 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passRepeat, setPassRepeat] = useState("");
+  const [mainHelpShow, setMainHelpShow] = useState(false);
+  const [mainHelpText, setMainHelpText] = useState("");
   const [loginHelpShow, setLoginHelpShow] = useState(false);
   const [loginHelpText, setLoginHelpText] = useState("");
   const [emailHelpShow, setEmailHelpShow] = useState(false);
@@ -27,10 +30,10 @@ const SignUp = () => {
     var emailValid = true;
     var passwordMatch = true;
     e.preventDefault();
-    if (!login.match(/^(?=.*[A-Za-z0-9]$)[A-Za-z][A-Za-z\d.\-_]{7,19}$/)) {
+    if (!login.match(/^(?=.*[A-Za-z0-9]$)[A-Za-z][A-Za-z\d.\-_]{7,}$/)) {
       setLoginHelpShow(true);
       setLoginHelpText(
-        "Your login must be 8-20 characters long, start with a letter, end with a letter or number, contain letters, numbers, hyphen or underscore, and must not contain spaces, special characters, or emoji."
+        "Your login must contain at least 8 symbols, start with a letter, end with a letter or number, contain letters, numbers, hyphen or underscore, and must not contain spaces, special characters, or emoji."
       );
       loginValid = false;
     } else if (!login) {
@@ -55,11 +58,18 @@ const SignUp = () => {
       setEmailHelpShow(false);
       emailValid = true;
     }
-    if (password.length < 8) {
-      setPassHelpText("The password must contain at least 8 symbols.");
+    if (
+      password.length < 8 ||
+      !password.match(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_])[A-Za-z\d@$!%*?&\-_]{8,}$/
+      )
+    ) {
+      setPassHelpShow(true);
+      setPassHelpText(
+        "The password must contain at least 8 symbols, have at least one number, one uppercase letter, one lowercase letter and one special symbol."
+      );
       passwordMatch = false;
     } else if (!(password === passRepeat)) {
-      setPassword("");
       setPassRepeat("");
       setPassHelpShow(true);
       setPassHelpText("Passwords do not match.");
@@ -69,6 +79,7 @@ const SignUp = () => {
       passwordMatch = true;
     }
     if (!loginValid || !emailValid || !passwordMatch) {
+      console.log(loginValid, "|", emailValid, "|", passwordMatch);
       return;
     }
     const response = await postRequest("users/signup", {
@@ -77,7 +88,8 @@ const SignUp = () => {
       password,
     });
     if (!response.success) {
-      alert(response.message);
+      setMainHelpShow(true);
+      setMainHelpText(response.message + ".");
       setLogin("");
       setEmail("");
       setPassword("");
@@ -85,7 +97,9 @@ const SignUp = () => {
       return;
     } else {
       localStorage.setItem("token", response.token);
-      const res = await getRequest("users/myself");
+      const res = await getRequest(
+        `users/myself?tz=${Intl.DateTimeFormat().resolvedOptions().timeZone}`
+      );
       dispatch(
         authLogin({
           user: res.user,
@@ -94,7 +108,7 @@ const SignUp = () => {
       );
       const codeResponse = getRequest("users/email/confirm/request");
       if (!codeResponse.success) {
-        alert(codeResponse.message);
+        // alert(codeResponse.message, "^");
       }
       navigate("/confirm-email");
     }
@@ -105,14 +119,19 @@ const SignUp = () => {
       <Row className="justify-content-center">
         <Col sm={12} md={6}>
           <Form>
+            <Form.Text
+              id="mainHelpBlock"
+              muted
+              style={{ display: mainHelpShow ? "initial" : "none" }}
+            >
+              {mainHelpText}
+            </Form.Text>
             <Form.Group className="mb-4">
               <Form.Label>Login</Form.Label>
               <Form.Control
                 required
                 placeholder="Login"
                 value={login}
-                minLength={8}
-                maxLength={20}
                 pattern="^(?=.*[A-Za-z0-9]$)[A-Za-z][A-Za-z\d.-_]{7,19}$"
                 onChange={(e) => setLogin(e.target.value)}
               />
@@ -128,6 +147,7 @@ const SignUp = () => {
               <Form.Label>E-mail</Form.Label>
               <Form.Control
                 required
+                autoComplete="on"
                 type="email"
                 placeholder="example@example.example"
                 value={email}
@@ -151,8 +171,6 @@ const SignUp = () => {
                 type="password"
                 placeholder="Password"
                 value={password}
-                minLength={8}
-                maxLength={64}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Group>
@@ -163,8 +181,6 @@ const SignUp = () => {
                 type="password"
                 placeholder="Repeat Password"
                 value={passRepeat}
-                minLength={8}
-                maxLength={64}
                 onChange={(e) => setPassRepeat(e.target.value)}
               />
               <Form.Text

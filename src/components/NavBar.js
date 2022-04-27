@@ -27,14 +27,14 @@ const NavBar = () => {
   };
 
   const menu = isLoggedIn ? (
-    <Nav>
+    <Nav className="flex-row gap-1">
       <Nav.Link
         as={Link}
         to={"/users/" + (currentUser ? currentUser.login : null)}
       >
         Hello, {currentUser ? currentUser.login : null}
       </Nav.Link>
-      <Dropdown>
+      <Dropdown id="menuDropdown">
         <Dropdown.Toggle />
         <Dropdown.Menu align="end">
           <Dropdown.Item
@@ -43,7 +43,7 @@ const NavBar = () => {
           >
             My profile
           </Dropdown.Item>
-          <Dropdown.Item onClick={handleLogout}>Log out</Dropdown.Item>
+          <Dropdown.Item id="logoutBtn" onClick={handleLogout}>Log out</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     </Nav>
@@ -68,7 +68,7 @@ const NavBar = () => {
 
   return (
     <>
-      <Navbar expand="sm">
+      <Navbar >
         <Container>
           <Navbar.Brand as={Link} to="/">
             LOGO

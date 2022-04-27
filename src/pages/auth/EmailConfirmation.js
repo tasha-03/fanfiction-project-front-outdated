@@ -2,11 +2,30 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useLoginGuard from "../../hooks/useLoginGuard";
 import { getRequest, postRequest } from "../../utilities/requests";
+import { useDispatch } from "react-redux";
+import { login, logout } from "../../features/authSlice";
 
 const { Row, Col, Form, Button, Container } = require("react-bootstrap");
 
 const EmailConfirmation = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const autoLogin = async () => {
+    const response = await getRequest(
+      `users/myself?tz=${Intl.DateTimeFormat().resolvedOptions().timeZone}`
+    );
+    if (response.success) {
+      dispatch(
+        login({
+          user: response.user,
+          token: localStorage.getItem("token"),
+        })
+      );
+    } else {
+      dispatch(logout());
+    }
+  };
+
   const [confirmationCode, setConfirmationCode] = useState("");
 
   const handleEmailConfirmation = async (e) => {
@@ -21,7 +40,7 @@ const EmailConfirmation = () => {
       setConfirmationCode("");
       return;
     }
-
+    autoLogin();
     navigate("/");
   };
 

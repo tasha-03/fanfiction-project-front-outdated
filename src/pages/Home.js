@@ -6,11 +6,14 @@ import {
   CarouselItem,
   Card,
   Button,
+  ListGroup,
 } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import WorkCard from "../components/WorkCard";
 
 const Home = () => {
+  document.title = "Home — Fanfiction-Project";
   const currentUser = useSelector((state) => state.auth.user);
   const isLoggedIn = Boolean(useSelector((state) => state.auth.token));
 
@@ -74,14 +77,48 @@ const Home = () => {
       </Row>
     </Container>
   ) : (
-    <Container fluid>
-      <Row>
+    <Container fluid className="py-3">
+      <Row className="gap-md-0 gap-3 mx-2">
         <Col sm={12} md={6}>
-          Browse your favourites:
+          <Card>
+            <Card.Header>Browse your favourites:</Card.Header>
+            <Card.Body className="px-0 m-0 row">
+              <Card className="col-12 col-lg-6 p-0 rounded-0">
+                <Card.Header>Fandoms</Card.Header>
+                <Card.Body className="p-0">
+                  <ListGroup className="rounded-0">
+                    <ListGroup.Item>Star Wars</ListGroup.Item>
+                  </ListGroup>
+                </Card.Body>
+              </Card>
+              <Card className="col-12 col-lg-6 p-0 m-0 rounded-0">
+                <Card.Header>Tags</Card.Header>
+                <Card.Body className="p-0">
+                  <ListGroup className="rounded-0">
+                    <ListGroup.Item>Star Wars</ListGroup.Item>
+                  </ListGroup>
+                </Card.Body>
+              </Card>
+              <Card className="col-12 p-0 rounded-0">
+                <Card.Header>Authors</Card.Header>
+                <Card.Body className="p-0">
+                  <ListGroup className="rounded-0">
+                    <ListGroup.Item>Star Wars</ListGroup.Item>
+                  </ListGroup>
+                </Card.Body>
+              </Card>
+            </Card.Body>
+          </Card>
         </Col>
-        <Col sm={12} md={6}>
-          <div>Post New Work</div>
-          <div>News</div>
+        <Col sm={12} md={6} className="d-flex flex-column gap-3">
+          <Card>
+            <Card.Body className="d-flex flex-column align-items-stretch">
+              <Button as={Link} to="/works/new" name="postNewWorkBtn">Post New Work</Button>
+            </Card.Body>
+          </Card>
+          <Card>
+            <Card.Header>News</Card.Header>
+          </Card>
         </Col>
       </Row>
     </Container>
