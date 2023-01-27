@@ -5,11 +5,10 @@ import { Link, useLocation } from "react-router-dom";
 import WorkHeader from "../../components/WorkHeader";
 import { getRequest } from "../../utilities/requests";
 
-const Work = () => {
+const Draft = () => {
   const location = useLocation();
   const currentUser = useSelector((state) => state.auth.user);
   const isLoggedIn = Boolean(useSelector((state) => state.auth.token));
-  console.log(isLoggedIn)
 
   console.log(location.search);
 
@@ -54,6 +53,16 @@ const Work = () => {
       ))
     ) : (
       <>
+        {work.parts && work.parts[0] && work.parts[0].description ? (
+          <Row>
+            <Col className="d-flex gap-3 align-items-center pb-3">
+              <h6 className="m-0">Description:</h6>
+              <p className="m-0">
+                {work.parts ? work.parts[0].description : null}
+              </p>
+            </Col>
+          </Row>
+        ) : null}
         {work.parts && work.parts[0] && work.parts[0].note ? (
           <Row>
             <Col className="d-flex gap-3 align-items-center pb-3">
@@ -77,8 +86,9 @@ const Work = () => {
     );
 
   const getWork = async () => {
+    console.log(location.pathname.split("/")[5]);
     const response = await getRequest(
-      `works/${location.pathname.split("/")[2]}`
+      `works/myworks/${location.pathname.split("/")[5]}`
     );
     if (!response.success) {
       return alert(response.message);
@@ -86,18 +96,8 @@ const Work = () => {
     setWork(response.work);
   };
 
-  const saveHistory = async () => {
-    const response = await getRequest(
-      `history/${location.pathname.split("/")[2]}`
-    );
-    if (!response.success) {
-      return alert(response.message);
-    }
-  };
-
   useEffect(() => {
     getWork();
-    if (isLoggedIn) saveHistory();
   }, []);
 
   return (
@@ -141,4 +141,4 @@ const Work = () => {
   );
 };
 
-export default Work;
+export default Draft;

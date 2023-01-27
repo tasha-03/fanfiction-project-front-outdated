@@ -8,11 +8,14 @@ import {
   Form,
   FormControl,
   Dropdown,
+  Image,
+  Badge,
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import useToken from "../hooks/useToken";
 import { logout } from "../features/authSlice";
+import logo from "../images/logo.png";
 
 const NavBar = () => {
   const dispatch = useDispatch();
@@ -27,7 +30,12 @@ const NavBar = () => {
   };
 
   const menu = isLoggedIn ? (
-    <Nav className="flex-row gap-1">
+    <Nav className="flex-row gap-1 align-items-center">
+      {currentUser.emailIsConfirmed ? null : (
+        <Nav.Link as={Link} to="/confirm-email" style={{ color: "red" }}>
+          Your profile isn't confirmed
+        </Nav.Link>
+      )}
       <Nav.Link
         as={Link}
         to={"/users/" + (currentUser ? currentUser.login : null)}
@@ -43,7 +51,22 @@ const NavBar = () => {
           >
             My profile
           </Dropdown.Item>
-          <Dropdown.Item id="logoutBtn" onClick={handleLogout}>Log out</Dropdown.Item>
+          <Dropdown.Item as={Link} to="/works/new">
+            Post work
+          </Dropdown.Item>
+          <Dropdown.Item
+            as={Link}
+            to={
+              "/users/" +
+              (currentUser ? currentUser.login : null) +
+              "/preferences"
+            }
+          >
+            Preferences
+          </Dropdown.Item>
+          <Dropdown.Item id="logoutBtn" onClick={handleLogout}>
+            Log out
+          </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     </Nav>
@@ -68,10 +91,14 @@ const NavBar = () => {
 
   return (
     <>
-      <Navbar >
+      <Navbar>
         <Container>
           <Navbar.Brand as={Link} to="/">
-            LOGO
+            <Image
+              src={logo}
+              style={{ height: "1.5rem", marginRight: "1rem" }}
+            />
+            Fanfiction-Project
           </Navbar.Brand>
           {menu}
         </Container>
@@ -94,7 +121,7 @@ const NavBar = () => {
                 <NavDropdown.Item as={Link} to="/users/search">
                   Users
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/works/search">
+                <NavDropdown.Item as={Link} to="/works/search?limit=20&page=1">
                   Works
                 </NavDropdown.Item>
               </NavDropdown>

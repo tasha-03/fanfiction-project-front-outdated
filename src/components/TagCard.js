@@ -2,12 +2,12 @@ import { Link } from "react-router-dom";
 import Row from "react-bootstrap/Row";
 import { ListGroup } from "react-bootstrap";
 
-const UserCard = ({ login }) => {
+const TagCard = ({ tid, tname }) => {
   return (
     <ListGroup.Item>
-      <Link to={"/users/" + login}>{login}</Link>
+      <Link to={"/tags/" + tid + "_" + encodeURIComponent(tname)}>{tname}</Link>
     </ListGroup.Item>
   );
 };
 
-export default UserCard;
+export default TagCard;

@@ -1,7 +1,13 @@
 import { Col, Row, Container, Nav } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import Draft from "../works/Draft";
+import EditWork from "../works/EditWork";
 import Dashboard from "./Dashboard";
+import Preferences from "./Preferences";
+import ProfileDrafts from "./ProfileDrafts";
+import ProfileHistory from "./ProfileHistory";
+import ProfileWorks from "./ProfileWorks";
 
 const DashboardPage = () => {
   const location = useLocation();
@@ -11,37 +17,83 @@ const DashboardPage = () => {
 
   return (
     <Container className="py-3">
-      <Row>
-        <Col xs={3}>
-          <Nav className="flex-column">
-            <Nav.Item>Dashboard</Nav.Item>
+      <Row className="gap-3">
+        <Col xs={12} md={2}>
+          <Nav className="flex-row flex-md-column gap-3 gap-md-1">
             <Nav.Item>
-              {login === currentUser.login ? "My " : null}Works
+              <Link to="./">Dashboard</Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Link to="./works">
+                {login === currentUser.login ? "My " : null}
+                Works
+              </Link>
             </Nav.Item>
             {login === currentUser.login ? (
-              <Nav.Item>My Drafts</Nav.Item>
+              <Nav.Item>
+                <Link to="./works/drafts">My Drafts</Link>
+              </Nav.Item>
             ) : null}
             <Nav.Item>
-              {login === currentUser.login ? "My " : null}Series
+              <Link to="./series">
+                {login === currentUser.login ? "My " : null}Series
+              </Link>
             </Nav.Item>
             <Nav.Item>
-              {login === currentUser.login ? "My " : null}Collections
+              <Link to="./collections">
+                {login === currentUser.login ? "My " : null}Collections
+              </Link>
             </Nav.Item>
             {login === currentUser.login ? (
-              <Nav.Item>Preferences</Nav.Item>
+              <Nav.Item>
+                <Link to="./history">History</Link>
+              </Nav.Item>
+            ) : null}
+            {login === currentUser.login ? (
+              <Nav.Item>
+                <Link to="./preferences">Preferences</Link>
+              </Nav.Item>
             ) : null}
           </Nav>
         </Col>
         <Col>
           <Routes>
-            <Route index element={<Dashboard />} />
-            <Route path="works">
-              <Route index />
-              <Route path="drafts" />
+            <Route path="/">
+              <Route path="works">
+                <Route index element={<ProfileWorks />} />
+                <Route path="drafts">
+                  <Route
+                    index
+                    element={
+                      login !== currentUser.login ? (
+                        <Navigate to="../.." />
+                      ) : (
+                        <ProfileDrafts />
+                      )
+                    }
+                  />
+                  <Route path=":workId">
+                    <Route index element={<Draft />} />
+                    <Route path="edit" element={<EditWork />} />
+                  </Route>
+                </Route>
+              </Route>
+              <Route path="history" element={<ProfileHistory />} />
+              <Route path="collections" />
+              <Route path="series" />
+              <Route
+                path="preferences"
+                element={
+                  login !== currentUser.login ? (
+                    <Navigate to="../.." />
+                  ) : (
+                    <Preferences />
+                  )
+                }
+              />
+
+              <Route index element={<Dashboard />} />
             </Route>
-            <Route path="history" />
-            <Route path="collections" />
-            <Route path="series" />
           </Routes>
         </Col>
       </Row>

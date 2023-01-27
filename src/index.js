@@ -20,24 +20,34 @@ import Work from "./pages/works/Work";
 import Works from "./pages/works/Works";
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./custom.scss";
 import "./index.css";
 import PostWork from "./pages/works/PostWork";
+import PostPart from "./pages/works/parts/PostPart";
+import EditWork from "./pages/works/EditWork";
+import Tags from "./pages/tags/Tags";
+import VkAuth from "./pages/auth/VkAuth";
+import Tag from "./pages/tags/Tag";
+import AddTag from "./pages/tags/AddTag";
+import Fandoms from "./pages/fandoms/Fandoms";
 
 const App = () => {
   const dispatch = useDispatch();
   const autoLogin = async () => {
-    const response = await getRequest(
-      `users/myself?tz=${Intl.DateTimeFormat().resolvedOptions().timeZone}`
-    );
-    if (response.success) {
-      dispatch(
-        login({
-          user: response.user,
-          token: localStorage.getItem("token"),
-        })
+    if (localStorage.getItem("token")) {
+      const response = await getRequest(
+        `users/myself?tz=${Intl.DateTimeFormat().resolvedOptions().timeZone}`
       );
-    } else {
-      dispatch(logout());
+      if (response.success) {
+        dispatch(
+          login({
+            user: response.user,
+            token: localStorage.getItem("token"),
+          })
+        );
+      } else {
+        dispatch(logout());
+      }
     }
   };
 
@@ -57,24 +67,27 @@ const App = () => {
                 <Route index element={<Navigate to="search" />} />
                 <Route path="new" element={<PostWork />} />
                 <Route path="search" element={<Works />} />
-                <Route path=":workId" element={<Work />} />
+                <Route path=":workId">
+                  <Route index element={<Work />} />
+                  <Route path="part" element={<PostPart />} />
+                  <Route path="edit" element={<EditWork />} />
+                </Route>
               </Route>
               <Route path="users">
                 <Route index element={<Navigate to="search" />} />
                 <Route path="search" element={<Users />} />
-                <Route path=":userLogin">
-                  <Route index element={<Navigate to="dashboard" />} />
-                  <Route path="dashboard" element={<DashboardPage />} />
-                </Route>
+                <Route path=":userLogin/*" element={<DashboardPage />} />
               </Route>
               <Route path="tags">
                 <Route index element={<Navigate to="search" />} />
-                <Route path="search" />
-                <Route path=":tagId" />
+                <Route path="search" element={<Tags />} />
+                <Route path="add" element={<AddTag />} />
+                <Route path=":tagId" element={<Tag />} />
               </Route>
               <Route path="fandoms">
                 <Route index element={<Navigate to="category" />} />
-                <Route path="category">
+                <Route path="search" element={<Fandoms />} />
+                <Route path="category" element={<Fandoms />}>
                   <Route path=":categoryName" />
                 </Route>
                 <Route path=":fandomId" />
@@ -90,6 +103,7 @@ const App = () => {
               <Route path="login" element={<LogIn />} />
               <Route path="signup" element={<SignUp />} />
               <Route path="confirm-email" element={<EmailConfirmation />} />
+              <Route path="vk-confirm" element={<VkAuth />} />
             </Route>
           </Routes>
         </Container>

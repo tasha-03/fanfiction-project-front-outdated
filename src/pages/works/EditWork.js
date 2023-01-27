@@ -8,12 +8,24 @@ import {
   Form,
   Row,
 } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { postRequest } from "../../utilities/requests";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  getRequest,
+  patchRequest,
+  postRequest,
+} from "../../utilities/requests";
 
-const PostWork = () => {
-  document.title = "Post new work — Fanfiction-Project";
+const EditWork = () => {
+  document.title = "Edit work — Fanfiction-Project";
+  const location = useLocation();
   const navigate = useNavigate();
+  const pathnameLength = location.pathname.split("/").length;
+  const workId = location.pathname.split("/")[pathnameLength - 2];
+  const path = location.pathname.split("/")[pathnameLength - 3];
+  const currentUser = useSelector((state) => state.auth.user);
+
+  // const [isHidden, setIsHidden] = useState(true);
 
   //TITLE ----------------------------------------------------------------------------------------------
   const [title, setTitle] = useState("");
@@ -208,15 +220,43 @@ const PostWork = () => {
     setCurrentWarnings(warnings);
   };
 
-  const postWork = async (e) => {
+  const [isHidden, setIsHidden] = useState();
+  const [finished, setFinished] = useState();
+
+  const getWork = async () => {
+    const response = await getRequest(`/works/myworks/${workId}`);
+    if (!response.success) {
+      return alert(response.message);
+    }
+    setTitle(response.work.title);
+    setDescription(response.work.description);
+    setNote(response.work.note);
+    setRating(response.work.rating);
+    setCategory(response.work.category);
+    setCurrentFandoms(response.work.fandoms.map((f) => f));
+    setCurrentCharacters(
+      response.work.tags.filter((t) => t.category === "character")
+    );
+    setCurrentRelationships(
+      response.work.tags.filter((t) => t.category === "relationship")
+    );
+    setCurrentTags(response.work.tags.filter((t) => t.category === "other"));
+    setCurrentWarnings(response.work.warnings.map((w) => w));
+    setIsHidden(!response.work.isVisible);
+    setFinished(response.finished);
+    console.log("got " + isHidden);
+  };
+
+  const patchWork = async (e) => {
     e.preventDefault();
-    const response = await postRequest("works", {
+    console.log("sent " + !isHidden);
+    const response = await patchRequest(`works/${workId}`, {
       title,
       rating,
       category,
       language,
       description,
-      finished: false,
+      finished,
       note,
       tags: currentCharacters
         .map((c, i) => c.id)
@@ -227,15 +267,24 @@ const PostWork = () => {
         ),
       fandoms: currentFandoms.map((f, i) => f.id),
       warnings: currentWarnings.map((w, i) => w.id),
+      isVisible: !isHidden,
     });
     if (!response.success) {
       return alert(response.message);
     }
-    navigate(`../${response.workId}/part`);
+    navigate(
+      isHidden
+        ? `/users/${currentUser.login}/works/drafts/${workId}`
+        : `/works/${workId}`
+    );
   };
 
+  useEffect(() => {
+    getWork();
+  }, []);
+
   return (
-    <Container id="PostWork" className="py-3">
+    <Container className="py-3">
       <Row className="justify-content-center align-items-stretch">
         <Col sm={12} md={6}>
           <Form className="d-flex flex-column gap-3">
@@ -437,8 +486,24 @@ const PostWork = () => {
                   Add warning
                 </Button>
               </Form.Group>
+              <Form.Group className="d-flex">
+                <Form.Check
+                  type="checkbox"
+                  label="Finished"
+                  defaultChecked={finished}
+                  onChange={(e) => setFinished(e.target.checked)}
+                />
+              </Form.Group>
+              <Form.Group className="d-flex">
+                <Form.Check
+                  type="checkbox"
+                  label="Keep as a draft"
+                  defaultChecked={isHidden}
+                  onChange={(e) => setIsHidden(e.target.checked)}
+                />
+              </Form.Group>
             </Form.Group>
-            <Button onClick={postWork}>Post New Work</Button>
+            <Button onClick={patchWork}>Save changes</Button>
           </Form>
         </Col>
       </Row>
@@ -446,4 +511,4 @@ const PostWork = () => {
   );
 };
 
-export default PostWork;
+export default EditWork;

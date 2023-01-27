@@ -1,0 +1,72 @@
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
+@import "../node_modules/bootstrap/scss/utilities";
+
+$custom-theme-colors: (
+  "rating-general-audience": #43a047,
+  "rating-teenage-audience": #ffea00,
+  "rating-mature-audience": #e65100,
+  "rating-explicit-content": #dd2c00,
+
+  "category-gen": #795548,
+  "category-fm": #43a047,
+  "category-mm": #3949ab,
+  "category-ff": #f06292,
+  "category-other": #757575,
+
+  "finished-true": #558b2f,
+  "finished-false": #e53935,
+
+  "admin-profile-badge": #673ab7,
+);
+
+$theme-colors: map-merge($theme-colors, $custom-theme-colors);
+$theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value");
+$utilities-colors: map-merge($utilities-colors, $theme-colors-rgb);
+$utilities-text-colors: map-loop(
+  $utilities-colors,
+  rgba-css-var,
+  "$key",
+  "text"
+);
+$utilities-bg-colors: map-loop($utilities-colors, rgba-css-var, "$key", "bg");
+@import "bootstrap";
+
+.bg-rating-general-audience {
+  background-color: var(--bs-rating-general-audience) !important;
+}
+.bg-rating-teenage-audience {
+  background-color: var(--bs-rating-teenage-audience) !important;
+  color: #616161;
+}
+.bg-rating-mature-audience {
+  background-color: var(--bs-rating-mature-audience) !important;
+}
+.bg-rating-explicit-content {
+  background-color: var(--bs-rating-explicit-content) !important;
+}
+.bg-category-gen {
+  background-color: var(--bs-category-gen) !important;
+}
+.bg-category-fm {
+  background-color: var(--bs-category-fm) !important;
+}
+.bg-category-mm {
+  background-color: var(--bs-category-mm) !important;
+}
+.bg-category-ff {
+  background-color: var(--bs-category-ff) !important;
+}
+.bg-category-other {
+  background-color: var(--bs-category-other) !important;
+}
+.bg-finished-true {
+  background-color: var(--bs-finished-true) !important;
+}
+.bg-finished-false {
+  background-color: var(--bs-finished-false) !important;
+}
+.bg-admin-profile-bagde {
+  background-color: var(--bs-admin-profile-badge) !important;
+}

@@ -1,3 +1,11 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Disallow: /works
+Disallow: /users
+Disallow: /tags
+Disallow: /fandoms
+Disallow: /preferences
+Disallow: /login
+Disallow: /signup
+Disallow: /confirm-email
+Disallow: /vk-confirm
+Allow: /about
